@@ -13,4 +13,4 @@ Open http://localhost:3000. Enter a name and join the live room to see other pla
 
 ## Deploy for other players
 
-GitHub Pages can host the static files but cannot run the live game server. Deploy this Node app to a host that supports WebSockets and persistent disk storage, and run a single server instance so online presence and saved scores are shared.
+GitHub Pages can host the static files but cannot run the live game server. The Render Blueprint uses its free web-service plan, which can sleep when idle. Scores are shared while the server is running, but its local score file may reset after a restart. Use a paid persistent disk or an external database if scores must survive restarts.

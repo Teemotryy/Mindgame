@@ -2,11 +2,7 @@ services:
   - type: web
     name: mindgame-live
     runtime: node
-    plan: 0.5c-512mb
+    plan: free
     buildCommand: npm ci
     startCommand: npm start
     healthCheckPath: /health
-    disk:
-      name: mindgame-scores
-      mountPath: /opt/render/project/src/data
-      sizeGB: 1
