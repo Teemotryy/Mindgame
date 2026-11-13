@@ -162,6 +162,117 @@ button {
   background: #e4e9df;
 }
 
+.online-panel {
+  max-width: 440px;
+  margin-top: 20px;
+  padding: 14px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.online-panel-heading,
+.online-room-label {
+  display: flex;
+  align-items: center;
+}
+
+.online-panel-heading {
+  justify-content: space-between;
+}
+
+.online-room-label {
+  gap: 8px;
+}
+
+.online-panel-heading > strong {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 400;
+}
+
+.presence-light {
+  width: 8px;
+  height: 8px;
+  background: #9aa69c;
+}
+
+.presence-light.is-connected {
+  background: #1baf73;
+  animation: presence-pulse 1.8s ease-in-out infinite;
+}
+
+.connection-status {
+  min-height: 18px;
+  margin: 8px 0 14px;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.online-lists {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.online-lists h2 {
+  margin: 0 0 8px;
+}
+
+.online-list {
+  min-height: 30px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.online-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 4px 0;
+  font-size: 0.8rem;
+  overflow-wrap: anywhere;
+}
+
+.online-list .online-empty {
+  color: var(--muted);
+  font-size: 0.74rem;
+}
+
+.online-list .you-label {
+  color: var(--muted);
+  font-family: 'DM Mono', monospace;
+  font-size: 0.58rem;
+  white-space: nowrap;
+}
+
+.highscore-list strong {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.74rem;
+}
+
+.join-room-button {
+  min-height: 40px;
+  margin-top: 12px;
+  padding: 0 12px;
+  border: 1px solid var(--ink);
+  background: transparent;
+  color: var(--ink);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.join-room-button:disabled {
+  color: var(--muted);
+  cursor: default;
+}
+
+@keyframes presence-pulse {
+  50% { opacity: 0.45; }
+}
+
 .game-actions {
   display: flex;
   align-items: center;
@@ -566,6 +677,10 @@ body.game-over .board-section {
 
   .game-actions {
     gap: 14px;
+  }
+
+  .online-panel {
+    margin-top: 16px;
   }
 
   .leaderboard-shell {

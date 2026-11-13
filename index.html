@@ -42,6 +42,25 @@
         <input id="player-name" type="text" maxlength="18" autocomplete="nickname" placeholder="Enter your name" required>
       </label>
 
+      <section class="online-panel" aria-label="Live players and high scores">
+        <div class="online-panel-heading">
+          <div class="online-room-label"><span id="presence-light" class="presence-light"></span><span class="eyebrow">LIVE ROOM</span></div>
+          <strong><span id="online-count">0</span> online</strong>
+        </div>
+        <p id="connection-status" class="connection-status" role="status" aria-live="polite">Connecting to the live room...</p>
+        <div class="online-lists">
+          <div>
+            <h2 class="eyebrow">PLAYERS</h2>
+            <ul id="online-players" class="online-list"><li class="online-empty">Waiting for players</li></ul>
+          </div>
+          <div>
+            <h2 class="eyebrow">GLOBAL BEST</h2>
+            <ol id="live-highscores" class="online-list highscore-list"><li class="online-empty">No scores yet</li></ol>
+          </div>
+        </div>
+        <button id="join-room-button" class="join-room-button" type="button">Join live room</button>
+      </section>
+
       <p id="game-status" class="game-status" role="status" aria-live="polite">Ready when you are.</p>
       <div class="game-actions">
         <button id="start-button" type="button">Start game <span aria-hidden="true">↗</span></button>
@@ -72,6 +91,8 @@
   </section>
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+  <script src="online.js"></script>
   <script src="game.js" charset="utf-8"></script>
 </body>
 

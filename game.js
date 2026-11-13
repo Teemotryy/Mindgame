@@ -26,6 +26,12 @@ $(".btn").click(function() {
   }
 
   var userChosenColour = $(this).attr("id");
+
+  if (onlineJoined) {
+    onlineSocket.emit("game:input", { color: userChosenColour });
+    return;
+  }
+
   userClickedPattern.push(userChosenColour);
   playSound(userChosenColour);
   animatePress(userChosenColour);
@@ -79,6 +85,15 @@ function animatePress(currentColor) {
 
 function startGame() {
   if (started) {
+    return;
+  }
+
+  if (onlineSocket && onlineSocket.connected) {
+    if (onlineJoined) {
+      onlineSocket.emit("game:start");
+    } else {
+      joinOnlineRoom(true);
+    }
     return;
   }
 

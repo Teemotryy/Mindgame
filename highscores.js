@@ -1,13 +1,28 @@
 var leaderboardRows = document.getElementById("leaderboard-rows");
 var leaderboardTable = document.getElementById("leaderboard-table");
 var emptyState = document.getElementById("empty-state");
+var leaderboardStatus = document.getElementById("leaderboard-status");
+var leaderboardSocket = typeof io === "function" ? io() : null;
 
-renderLeaderboard();
+if (leaderboardSocket) {
+  leaderboardSocket.on("connect", function() {
+    leaderboardStatus.textContent = "Live leaderboard connected.";
+    leaderboardSocket.emit("leaderboard:get");
+  });
 
-function renderLeaderboard() {
-  var entries = loadLeaderboard();
+  leaderboardSocket.on("leaderboard:update", renderLeaderboard);
+  leaderboardSocket.on("disconnect", function() {
+    leaderboardStatus.textContent = "Live leaderboard disconnected.";
+  });
+} else {
+  leaderboardStatus.textContent = "Live scores require the game server.";
+}
+
+function renderLeaderboard(entries) {
+  leaderboardRows.replaceChildren();
   emptyState.hidden = entries.length > 0;
   leaderboardTable.hidden = entries.length === 0;
+  leaderboardStatus.hidden = entries.length === 0;
 
   entries.forEach(function(entry, index) {
     var row = document.createElement("tr");
@@ -17,26 +32,6 @@ function renderLeaderboard() {
     row.appendChild(createCell(formatDate(entry.date)));
     leaderboardRows.appendChild(row);
   });
-}
-
-function loadLeaderboard() {
-  try {
-    var entries = JSON.parse(localStorage.getItem("simonLeaderboard") || "[]");
-    if (!Array.isArray(entries)) {
-      return [];
-    }
-
-    return entries
-      .filter(function(entry) {
-        return entry && typeof entry.name === "string" && Number.isFinite(Number(entry.score)) && Number(entry.score) > 0;
-      })
-      .sort(function(first, second) {
-        return Number(second.score) - Number(first.score) || new Date(first.date) - new Date(second.date);
-      })
-      .slice(0, 10);
-  } catch (error) {
-    return [];
-  }
 }
 
 function createCell(value) {

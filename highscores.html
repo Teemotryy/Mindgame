@@ -22,10 +22,11 @@
     <p class="eyebrow">THE MEMORY GAME / RECORDS</p>
     <div class="leaderboard-heading">
       <h1>High scores<span class="title-dot">.</span></h1>
-      <p>The ten longest runs on this browser.</p>
+      <p>Top players in the live room.</p>
     </div>
 
-    <p id="empty-state" class="empty-leaderboard" role="status" hidden>No scores yet. Play a game to earn a place here.</p>
+    <p id="leaderboard-status" class="empty-leaderboard" role="status" aria-live="polite">Connecting to the live leaderboard...</p>
+    <p id="empty-state" class="empty-leaderboard" role="status" hidden>No scores yet. Play a shared game to get on the board.</p>
     <table id="leaderboard-table" class="leaderboard-table" aria-label="Simon high scores">
       <thead>
         <tr>
@@ -41,6 +42,7 @@
     <a class="back-link leaderboard-back" href="index.html">← Play Simon</a>
   </main>
 
+  <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
   <script src="highscores.js"></script>
 </body>
 
