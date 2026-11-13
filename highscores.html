@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#eef2e8">
+  <title>High Scores | Timothy's Simon</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <header class="site-header">
+    <a class="wordmark" href="index.html" aria-label="Timothy's Simon home">TIMOTHY'S <span>SIMON / 01</span></a>
+    <a class="back-link" href="index.html">BACK TO GAME <span aria-hidden="true">↗</span></a>
+  </header>
+
+  <main class="leaderboard-shell">
+    <p class="eyebrow">THE MEMORY GAME / RECORDS</p>
+    <div class="leaderboard-heading">
+      <h1>High scores<span class="title-dot">.</span></h1>
+      <p>The ten longest runs on this browser.</p>
+    </div>
+
+    <p id="empty-state" class="empty-leaderboard" role="status" hidden>No scores yet. Play a game to earn a place here.</p>
+    <table id="leaderboard-table" class="leaderboard-table" aria-label="Simon high scores">
+      <thead>
+        <tr>
+          <th scope="col">RANK</th>
+          <th scope="col">PLAYER</th>
+          <th scope="col">SCORE</th>
+          <th scope="col">DATE</th>
+        </tr>
+      </thead>
+      <tbody id="leaderboard-rows"></tbody>
+    </table>
+
+    <a class="back-link leaderboard-back" href="index.html">← Play Simon</a>
+  </main>
+
+  <script src="highscores.js"></script>
+</body>
+
+</html>

@@ -1,79 +1,214 @@
 
 var buttonColours = ["red", "blue", "green", "yellow"];
-
 var gamePattern = [];
 var userClickedPattern = [];
-
 var started = false;
+var acceptingInput = false;
 var level = 0;
+var score = 0;
+var bestScore = loadBestScore();
+var currentPlayerName = "";
+var overlayTimeout;
+var overlayMode = "";
 
-$(document).keypress(function() {
-  if (!started) {
-    $("#level-title").text("Level " + level);
-    nextSequence();
-    started = true;
+$("#best-score").text(formatScore(bestScore));
+
+$("#start-button").click(startGame);
+
+$(document).keydown(function(event) {
+  if (!started && $("#game-overlay").prop("hidden") && event.target.id !== "player-name" && event.key.length === 1 && !event.ctrlKey && !event.metaKey) {
+    startGame();
   }
 });
 
 $(".btn").click(function() {
+  if (!started || !acceptingInput) {
+    return;
+  }
 
   var userChosenColour = $(this).attr("id");
   userClickedPattern.push(userChosenColour);
-
   playSound(userChosenColour);
   animatePress(userChosenColour);
-
-  checkAnswer(userClickedPattern.length-1);
+  checkAnswer(userClickedPattern.length - 1);
 });
 
-function checkAnswer(currentLevel) {
+function checkAnswer(currentStep) {
+  if (gamePattern[currentStep] !== userClickedPattern[currentStep]) {
+    finishGame();
+    return;
+  }
 
-    if (gamePattern[currentLevel] === userClickedPattern[currentLevel]) {
-      if (userClickedPattern.length === gamePattern.length){
-        setTimeout(function () {
-          nextSequence();
-        }, 1000);
-      }
-    } else {
-      playSound("wrong");
-      $("body").addClass("game-over");
-      $("#level-title").text("Game Over, Press Any Key to Restart");
+  if (userClickedPattern.length === gamePattern.length) {
+    acceptingInput = false;
+    $(".btn").prop("disabled", true);
+    score = level;
+    var isNewBest = updateScore();
+    $("#game-status").text("Round cleared.");
 
-      setTimeout(function () {
-        $("body").removeClass("game-over");
-      }, 200);
-
-      startOver();
+    if (isNewBest) {
+      showOverlay("NEW PERSONAL BEST", score, "A new record, " + currentPlayerName + ". Keep it going.", "Keep playing", "record");
     }
-}
 
+    setTimeout(nextSequence, isNewBest ? 1800 : 850);
+  }
+}
 
 function nextSequence() {
   userClickedPattern = [];
   level++;
-  $("#level-title").text("Level " + level);
-  var randomNumber = Math.floor(Math.random() * 4);
-  var randomChosenColour = buttonColours[randomNumber];
-  gamePattern.push(randomChosenColour);
+  $("#round-number, #board-round").text(formatScore(level));
+  $("#game-status").text("Listen for the new color.");
 
-  $("#" + randomChosenColour).fadeIn(100).fadeOut(100).fadeIn(100);
-  playSound(randomChosenColour);
+  var randomNumber = Math.floor(Math.random() * buttonColours.length);
+  gamePattern.push(buttonColours[randomNumber]);
+  acceptingInput = false;
+  $(".btn").prop("disabled", true);
+  setTimeout(function() {
+    var newColour = gamePattern[gamePattern.length - 1];
+    playSound(newColour);
+    animatePress(newColour);
+    setTimeout(function() {
+      acceptingInput = true;
+      $(".btn").prop("disabled", false);
+      $("#game-status").text("Your turn. Repeat the pattern.");
+    }, 350);
+  }, 350);
 }
 
 function animatePress(currentColor) {
   $("#" + currentColor).addClass("pressed");
-  setTimeout(function () {
+  setTimeout(function() {
     $("#" + currentColor).removeClass("pressed");
-  }, 100);
+  }, 260);
+}
+
+function startGame() {
+  if (started) {
+    return;
+  }
+
+  currentPlayerName = $("#player-name").val().trim();
+  if (!currentPlayerName) {
+    $("#game-status").text("Enter your name before starting.");
+    $("#player-name").trigger("focus");
+    return;
+  }
+
+  started = true;
+  acceptingInput = false;
+  level = 0;
+  score = 0;
+  gamePattern = [];
+  userClickedPattern = [];
+  $("body").removeClass("game-over");
+  $("#score, #round-number, #board-round").text("00");
+  $("#game-status").text("Get ready.");
+  $("#player-name").prop("disabled", true);
+  $("#start-button").prop("hidden", true);
+  nextSequence();
+}
+
+function finishGame() {
+  acceptingInput = false;
+  started = false;
+  $(".btn").prop("disabled", true);
+  playSound("wrong");
+  $("body").addClass("game-over");
+  $("#game-status").text(score > 0 ? "Game over. " + score + " rounds cleared." : "Not quite. Try again.");
+  $("#player-name").prop("disabled", false);
+  $("#start-button").text("Play again").prop("hidden", false);
+
+  showOverlay("GAME OVER", score, score > 0 ? currentPlayerName + ", you cleared " + score + " rounds." : "One more try? The pattern is waiting.", "Play again", "game-over");
+
+  if (score > 0) {
+    saveLeaderboardEntry(currentPlayerName, score);
+  }
+}
+
+function updateScore() {
+  var isNewBest = false;
+  $("#score").text(formatScore(score));
+
+  if (score > bestScore) {
+    bestScore = score;
+    isNewBest = true;
+    $("#best-score").text(formatScore(bestScore));
+    saveBestScore(bestScore);
+  }
+
+  return isNewBest;
+}
+
+function showOverlay(kicker, value, message, actionLabel, mode) {
+  clearTimeout(overlayTimeout);
+  overlayMode = mode;
+  $("#overlay-kicker").text(kicker);
+  $("#overlay-title").text(mode === "record" ? "You did it." : "Game over.");
+  $("#overlay-score").text(formatScore(value));
+  $("#overlay-message").text(message);
+  $("#overlay-action").text(actionLabel);
+  $("#game-overlay").toggleClass("is-record", mode === "record").prop("hidden", false);
+  $("#overlay-action").trigger("focus");
+
+  if (mode === "record") {
+    overlayTimeout = setTimeout(hideOverlay, 1500);
+  }
+}
+
+function hideOverlay() {
+  clearTimeout(overlayTimeout);
+  $("#game-overlay").prop("hidden", true);
+  $("#start-button").trigger("focus");
+}
+
+$("#overlay-action").click(function() {
+  var shouldRestart = overlayMode === "game-over";
+  hideOverlay();
+
+  if (shouldRestart) {
+    startGame();
+  }
+});
+
+function formatScore(value) {
+  return String(value).padStart(2, "0");
+}
+
+function loadBestScore() {
+  try {
+    return Number(localStorage.getItem("simonBestScore")) || 0;
+  } catch (error) {
+    return 0;
+  }
+}
+
+function saveBestScore(value) {
+  try {
+    localStorage.setItem("simonBestScore", String(value));
+  } catch (error) {
+    return;
+  }
+}
+
+function saveLeaderboardEntry(name, value) {
+  try {
+    var entries = JSON.parse(localStorage.getItem("simonLeaderboard") || "[]");
+    entries.push({
+      name: name,
+      score: value,
+      date: new Date().toISOString()
+    });
+    entries.sort(function(first, second) {
+      return second.score - first.score || new Date(first.date) - new Date(second.date);
+    });
+    localStorage.setItem("simonLeaderboard", JSON.stringify(entries.slice(0, 10)));
+  } catch (error) {
+    return;
+  }
 }
 
 function playSound(name) {
   var audio = new Audio("sounds/" + name + ".mp3");
-  audio.play();
-}
-
-function startOver() {
-  level = 0;
-  gamePattern = [];
-  started = false;
+  audio.play().catch(function() {});
 }

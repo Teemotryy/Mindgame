@@ -1,43 +1,78 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="en">
 
 <head>
   <meta charset="utf-8">
-  <title>Timothy's game</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#eef2e8">
+  <title>Timothy's Simon | Memory Game</title>
   <link rel="stylesheet" href="styles.css">
-  <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 
 <body>
-  <h1 id="level-title">Press A Key to Start</h1>
-  <div class="container">
-    <div lass="row">
-
-      <div type="button" id="green" class="btn green">
-
-      </div>
-
-      <div type="button" id="red" class="btn red">
-
-      </div>
+  <header class="site-header">
+    <a class="wordmark" href="#" aria-label="Timothy's Simon home">TIMOTHY'S <span>SIMON / 01</span></a>
+    <div class="best-score" aria-label="Best score">
+      <span class="eyebrow">PERSONAL BEST</span>
+      <strong id="best-score">00</strong>
     </div>
+  </header>
 
-    <div class="row">
+  <main class="game-shell">
+    <section class="game-info" aria-label="Game score and controls">
+      <p class="eyebrow">THE MEMORY GAME</p>
+      <h1>Simon<span class="title-dot">.</span></h1>
 
-      <div type="button" id="yellow" class="btn yellow">
-
+      <div class="score-strip">
+        <div class="score-item">
+          <span class="eyebrow">SCORE</span>
+          <strong id="score">00</strong>
+        </div>
+        <div class="score-item">
+          <span class="eyebrow">ROUND</span>
+          <strong id="round-number">00</strong>
+        </div>
       </div>
-      <div type="button" id="blue" class="btn blue">
 
+      <label class="player-field" for="player-name">
+        <span class="eyebrow">PLAYER NAME</span>
+        <input id="player-name" type="text" maxlength="18" autocomplete="nickname" placeholder="Enter your name" required>
+      </label>
+
+      <p id="game-status" class="game-status" role="status" aria-live="polite">Ready when you are.</p>
+      <div class="game-actions">
+        <button id="start-button" type="button">Start game <span aria-hidden="true">↗</span></button>
+        <a class="leaderboard-link" href="highscores.html">View high scores <span aria-hidden="true">↗</span></a>
       </div>
+    </section>
 
+    <section class="board-section" aria-label="Simon game board">
+      <div class="board-label"><span>SIMON</span><span class="board-lights" aria-hidden="true"><i></i><i></i><i></i></span></div>
+      <div class="container">
+        <button type="button" id="green" class="btn green" aria-label="Green pad" disabled></button>
+        <button type="button" id="red" class="btn red" aria-label="Red pad" disabled></button>
+        <button type="button" id="yellow" class="btn yellow" aria-label="Yellow pad" disabled></button>
+        <button type="button" id="blue" class="btn blue" aria-label="Blue pad" disabled></button>
+      </div>
+      <div class="board-footer"><span>MEMORY / 1978</span><span>NO. <span id="board-round">00</span></span></div>
+    </section>
+  </main>
+
+  <section id="game-overlay" class="game-overlay" role="dialog" aria-modal="true" aria-labelledby="overlay-title" hidden>
+    <div class="overlay-content">
+      <p id="overlay-kicker" class="eyebrow">ROUND COMPLETE</p>
+      <h2 id="overlay-title">Game over</h2>
+      <strong id="overlay-score" class="overlay-score">00</strong>
+      <p id="overlay-message" class="overlay-message"></p>
+      <button id="overlay-action" type="button">Play again</button>
     </div>
-
-  </div>
+  </section>
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="game.js" charset="utf-8"></script>
-
 </body>
 
 </html>
