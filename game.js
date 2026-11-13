@@ -8,7 +8,6 @@ var level = 0;
 var score = 0;
 var bestScore = loadBestScore();
 var currentPlayerName = "";
-var overlayTimeout;
 var overlayMode = "";
 
 $("#best-score").text(formatScore(bestScore));
@@ -44,13 +43,8 @@ function checkAnswer(currentStep) {
     $(".btn").prop("disabled", true);
     score = level;
     var isNewBest = updateScore();
-    $("#game-status").text("Round cleared.");
-
-    if (isNewBest) {
-      showOverlay("NEW PERSONAL BEST", score, "A new record, " + currentPlayerName + ". Keep it going.", "Keep playing", "record");
-    }
-
-    setTimeout(nextSequence, isNewBest ? 1800 : 850);
+    $("#game-status").text(isNewBest ? "New personal best: " + formatScore(bestScore) : "Round cleared.");
+    setTimeout(nextSequence, 850);
   }
 }
 
@@ -134,30 +128,35 @@ function updateScore() {
     bestScore = score;
     isNewBest = true;
     $("#best-score").text(formatScore(bestScore));
+    animateBestScore();
     saveBestScore(bestScore);
   }
 
   return isNewBest;
 }
 
+function animateBestScore() {
+  var scoreElement = $("#best-score");
+  scoreElement.removeClass("is-new-best");
+  scoreElement[0].offsetWidth;
+  scoreElement.addClass("is-new-best");
+  setTimeout(function() {
+    scoreElement.removeClass("is-new-best");
+  }, 700);
+}
+
 function showOverlay(kicker, value, message, actionLabel, mode) {
-  clearTimeout(overlayTimeout);
   overlayMode = mode;
   $("#overlay-kicker").text(kicker);
-  $("#overlay-title").text(mode === "record" ? "You did it." : "Game over.");
+  $("#overlay-title").text("Game over.");
   $("#overlay-score").text(formatScore(value));
   $("#overlay-message").text(message);
   $("#overlay-action").text(actionLabel);
-  $("#game-overlay").toggleClass("is-record", mode === "record").prop("hidden", false);
+  $("#game-overlay").prop("hidden", false);
   $("#overlay-action").trigger("focus");
-
-  if (mode === "record") {
-    overlayTimeout = setTimeout(hideOverlay, 1500);
-  }
 }
 
 function hideOverlay() {
-  clearTimeout(overlayTimeout);
   $("#game-overlay").prop("hidden", true);
   $("#start-button").trigger("focus");
 }
